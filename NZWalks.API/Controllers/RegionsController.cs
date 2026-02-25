@@ -90,7 +90,7 @@ namespace NZWalks.API.Controllers {
             return CreatedAtAction(nameof(GetById), new { id = regionDto.Id}, regionDto);
         }
 
-        // Uopdate region
+        // Update region
         // PUT: https://localhost:7080/api/regoins/{id}
         [HttpPut]
         [Route("{id:guid}")]
@@ -120,5 +120,22 @@ namespace NZWalks.API.Controllers {
             return Ok(regionDto);
         }
 
+        // Delete region
+        // DELETE: https://localhost:7080/api/regoins/{id}
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public IActionResult Delete([FromRoute] Guid id) {
+            var regionDomain = dbContext.Regions.FirstOrDefault(X => X.Id == id);
+
+            if(regionDomain == null) {
+                return NotFound();
+            }
+
+            // delete region
+            dbContext.Regions.Remove(regionDomain); 
+            dbContext.SaveChanges();
+
+            return Ok();
+        }
     }
 }
