@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Models.Domain;
 using NZWalks.API.Models.DTO;
 using NZWalks.API.Repositories;
@@ -51,6 +52,32 @@ namespace NZWalks.API.Controllers {
             }
 
             return Ok(mapper.Map<WalkDto>(walkDomain));
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, UpdateWalkRequestDto updateWalkRequestDto) {
+            var walkDomain = mapper.Map<Walk>(updateWalkRequestDto);
+
+            walkDomain = await walkRepository.UpdateAsync(id, walkDomain);
+
+            if(walkDomain == null) {
+                return NotFound();
+            }
+
+            return Ok(mapper.Map<Walk>(walkDomain));
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id) {
+            var deleteDomainWalk = await walkRepository.DeleteAsync(id);
+
+            if(deleteDomainWalk == null) {
+                return NotFound();
+            }
+
+            return Ok(mapper.Map<WalkDto>(deleteDomainWalk));
         }
     }
 }
