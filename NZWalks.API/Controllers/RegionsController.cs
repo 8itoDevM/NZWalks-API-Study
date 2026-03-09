@@ -30,18 +30,22 @@ namespace NZWalks.API.Controllers {
 
         // GET: https://localhost:7080/api/regoins
         [HttpGet]
-        [Authorize(Roles = "Reader,Writer")]
+        //[Authorize(Roles = "Reader,Writer")]
         public async Task<IActionResult> GetAll() {
-            logger.LogInformation("GetAll action method was invoked");
+            try {
+                throw new Exception("Test Exception");
 
-            //Get data from databsae perform CRUD operations - Domain models
-            var regionDomain = await regionRepository.GetAllAsync();
+                //Get data from databsae perform CRUD operations - Domain models
+                var regionDomain = await regionRepository.GetAllAsync();
 
-            logger.LogInformation($"Finished GetAllRegions request {JsonSerializer.Serialize(regionDomain)}");
+                logger.LogInformation($"Finished GetAllRegions request {JsonSerializer.Serialize(regionDomain)}");
 
-            // Return DTOs to client
-            return Ok(mapper.Map<List<RegionDto>>(regionDomain));
-
+                // Return DTOs to client
+                return Ok(mapper.Map<List<RegionDto>>(regionDomain));
+            } catch (Exception ex){
+                logger.LogError(ex, "Error in GetAll");
+                return StatusCode(500, "Internal server error");
+            } 
         }
 
         // GET single region by ID
